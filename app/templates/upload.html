@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Upload de Imagem para S3</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='android-chrome-192x192.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -51,6 +52,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             width: 90%;
             max-width: 700px;
+            margin-bottom: 30px;
         }
 
         input[type="file"] {
@@ -88,6 +90,36 @@
             font-size: 14px;
         }
 
+        .tabela-container {
+            width: 100%;
+            max-width: 700px;
+            overflow-x: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #d32f2f;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
         @media (max-width: 768px) {
             .barra-vermelha {
                 display: none;
@@ -104,7 +136,7 @@
     </style>
 </head>
 <body>
-    <!-- Barra vermelha lateral (oculta no mobile) -->
+    <!-- Barra vermelha lateral -->
     <div class="barra-vermelha"></div>
 
     <!-- Conteúdo principal -->
@@ -115,6 +147,7 @@
 
         <h1>Upload de Imagem</h1>
 
+        <!-- Mensagens de alerta -->
         {% with messages = get_flashed_messages() %}
           {% if messages %}
             <ul>
@@ -125,10 +158,60 @@
           {% endif %}
         {% endwith %}
 
+        <!-- Formulário de upload -->
         <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
             <input type="file" name="image" accept="image/*">
             <button type="submit">Enviar</button>
         </form>
+
+        <!-- Tabela de arquivos -->
+        <div class="tabela-container">
+            <h2>Arquivos no Bucket</h2>
+            <table id="tabela-arquivos">
+                <thead>
+                    <tr>
+                        <th>Nome do Arquivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados preenchidos dinamicamente via JavaScript -->
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <!-- Script para preencher a tabela -->
+    <script>
+        async function carregarArquivos() {
+            try {
+                const resposta = await fetch('/listar');
+                const dados = await resposta.json();
+
+                const tabela = document.querySelector('#tabela-arquivos tbody');
+                tabela.innerHTML = '';
+
+                if (dados.arquivos && dados.arquivos.length > 0) {
+                    dados.arquivos.forEach(arquivo => {
+                        const linha = document.createElement('tr');
+                        const coluna = document.createElement('td');
+                        coluna.textContent = arquivo;
+                        linha.appendChild(coluna);
+                        tabela.appendChild(linha);
+                    });
+                } else {
+                    const linha = document.createElement('tr');
+                    const coluna = document.createElement('td');
+                    coluna.textContent = 'Nenhum arquivo encontrado.';
+                    coluna.colSpan = 1;
+                    linha.appendChild(coluna);
+                    tabela.appendChild(linha);
+                }
+            } catch (erro) {
+                console.error('Erro ao carregar arquivos:', erro);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', carregarArquivos);
+    </script>
 </body>
 </html>

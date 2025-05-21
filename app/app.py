@@ -91,6 +91,20 @@ def listar():
         return jsonify({'erro': str(e)}), 500
 
 
+@app.route('/download/<path:filename>')
+def download(filename):
+    try:
+        url = s3.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': S3_BUCKET, 'Key': filename},
+            ExpiresIn=3600
+        )
+        return redirect(url)
+    except Exception as e:
+        logger.error(f"Erro ao gerar URL para {filename}: {e}")
+        return jsonify({'erro': str(e)}), 500
+
+
 if __name__ == '__main__':
 
     app.run(
