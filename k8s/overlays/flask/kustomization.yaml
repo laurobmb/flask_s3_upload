@@ -18,7 +18,7 @@ resources:
 images:
 - name: flaskimage
   newName: quay.io/lagomes/flask-s3-upload
-  newTag: v2
+  newTag: v3
 labels:
 - includeSelectors: true
   pairs:
