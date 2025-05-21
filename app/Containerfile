@@ -1,0 +1,31 @@
+# Imagem base oficial com Python
+FROM python:3.11-slim
+
+# Variáveis de ambiente
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Diretório de trabalho dentro do container
+WORKDIR /app
+
+# Instalar dependências do sistema
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar arquivos da aplicação
+COPY requirements.txt .
+
+# Instalar dependências Python
+RUN pip install --upgrade pip && \
+    pip install --upgrade pip && pip install -r requirements.txt
+
+COPY . .
+
+# Expor a porta padrão do Flask
+EXPOSE 5000
+
+# Comando para rodar a aplicação
+CMD ["python", "app.py"]

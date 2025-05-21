@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+nameSuffix: -hml
+
+namespace: flask-hml
+
+resources:
+- route.yaml
+- hpa.yaml
+- ns.yaml
+- rq-flask.yaml
+- ../../base
+- rolebinding.yaml
+- sa.yaml
+- obc.yaml
+
+images:
+- name: flaskimage
+  newName: quay.io/lagomes/flask-s3-upload
+  newTag: v2
+labels:
+- includeSelectors: true
+  pairs:
+    env: flaskupload
+
+patches:
+- path: patch-deployment.yaml

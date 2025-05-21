@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload de Imagem para S3</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background-color: #f9f9f9;
+        }
+
+        .barra-vermelha {
+            width: 90px;
+            background-color: red;
+        }
+
+        .conteudo {
+            flex: 1;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .imagem-topo {
+            width: 55%;
+            max-width: 350px;
+            height: auto;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 700px;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #b71c1c;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        li {
+            background-color: #ffebee;
+            color: #b71c1c;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .barra-vermelha {
+                display: none;
+            }
+
+            .imagem-topo {
+                width: 40%;
+            }
+
+            form {
+                padding: 15px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra vermelha lateral (oculta no mobile) -->
+    <div class="barra-vermelha"></div>
+
+    <!-- Conteúdo principal -->
+    <div class="conteudo">
+        <!-- Logo no topo -->
+        <img src="{{ url_for('static', filename='Logo-Red_Hat-OpenShift_4-A-Standard-RGB.svg') }}"
+             alt="Logo OpenShift" class="imagem-topo">
+
+        <h1>Upload de Imagem</h1>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*">
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</body>
+</html>
