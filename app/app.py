@@ -1,17 +1,20 @@
+import logging
+import logging.config
+import os
+
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from botocore.exceptions import BotoCoreError, ClientError
 from werkzeug.utils import secure_filename
-import logging.config, os, boto3
+import boto3
 
+"""Aplicação Flask para upload de imagens em um bucket S3."""
 
-fmt = ('%(asctime)s: %(threadName)s: %(name)s: %(levelname)s: %(message)s')
-logging.basicConfig(format=fmt,level=logging.INFO,datefmt='%H:%M:%S')
+LOG_FORMAT = '%(asctime)s: %(threadName)s: %(name)s: %(levelname)s: %(message)s'
+logging.basicConfig(format=LOG_FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
 logger = logging.getLogger('flask_upload')
-
 
 app = Flask(__name__)
 app.secret_key = 'minha_chave_secreta'
-
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 S3_BUCKET = os.environ.get('S3_BUCKET', 'meu-bucket-de-imagens')
