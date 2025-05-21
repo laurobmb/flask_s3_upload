@@ -1,3 +1,5 @@
+"""Aplicação Flask para upload de imagens em um bucket S3."""
+
 import logging
 import logging.config
 import os
@@ -6,8 +8,6 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from botocore.exceptions import BotoCoreError, ClientError
 from werkzeug.utils import secure_filename
 import boto3
-
-"""Aplicação Flask para upload de imagens em um bucket S3."""
 
 LOG_FORMAT = '%(asctime)s: %(threadName)s: %(name)s: %(levelname)s: %(message)s'
 logging.basicConfig(format=LOG_FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
@@ -34,17 +34,20 @@ s3 = boto3.client(
 
 
 def is_allowed_file(filename):
+    """Aplicação Flask para upload de imagens em um bucket S3."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route('/')
 def index():
+    """Aplicação Flask para upload de imagens em um bucket S3."""
     logger.info("FLASK_UPLOAD: Inicial")
     return render_template('upload.html')
 
 
 @app.route('/upload', methods=['POST'])
 def upload():
+    """Aplicação Flask para upload de imagens em um bucket S3."""
     if 'image' not in request.files:
         logger.error("FLASK_UPLOAD: Nenhum arquivo enviado")
         flash('Nenhum arquivo enviado.')
@@ -84,6 +87,7 @@ def upload():
 
 @app.route('/listar')
 def listar():
+    """Aplicação Flask para upload de imagens em um bucket S3."""
     try:
         objetos = s3.list_objects_v2(Bucket=S3_BUCKET)
         nomes_arquivos = [obj['Key'] for obj in objetos.get('Contents', [])]
@@ -96,6 +100,7 @@ def listar():
 
 @app.route('/download/<path:filename>')
 def download(filename):
+    """Aplicação Flask para upload de imagens em um bucket S3."""
     try:
         url = s3.generate_presigned_url(
             'get_object',
@@ -103,8 +108,8 @@ def download(filename):
             ExpiresIn=3600
         )
         return redirect(url)
-    except Exception as e:
-        logger.error(f"Erro ao gerar URL para {filename}: {e}")
+    except (ClientError, BotoCoreError) as e:
+        logger.error("FLASK_UPLOAD: Erro ao gerar URL para %s: %s", filename, e)
         return jsonify({'erro': str(e)}), 500
 
 
