@@ -40,6 +40,7 @@ def is_allowed_file(filename):
 
 @app.route('/debug')
 def debug():
+    """Aplicação Flask para upload de imagens em um bucket S3."""
     return render_template('debug.html',
         s3_bucket=os.environ.get('S3_BUCKET', 'meu-bucket-de-imagens'),
         s3_region=os.environ.get('S3_REGION', 'us-east-1'),

@@ -1,0 +1,42 @@
+[MASTER]
+ignore=venv
+jobs=1
+load-plugins=pylint_flask,pylint_pytest
+
+[MESSAGES CONTROL]
+disable=
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    redefined-outer-name,
+    too-few-public-methods,
+    too-many-arguments,
+    too-many-locals,
+    too-many-branches,
+    too-many-statements,
+    too-many-instance-attributes,
+    line-too-long,
+    duplicate-code
+
+[FORMAT]
+max-line-length=100
+
+[TYPECHECK]
+ignored-modules=boto3,botocore,flask,pytest,moto
+
+[DESIGN]
+max-args=6
+max-locals=15
+max-branches=12
+max-statements=50
+max-attributes=10
+
+[REPORTS]
+output-format=colorized
+reports=no
+
+[REFACTORING]
+max-nested-blocks=5
+
+[VARIABLES]
+dummy-variables-rgx=(_.*|dummy)
