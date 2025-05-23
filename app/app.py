@@ -143,9 +143,8 @@ def download(filename):
         if error_code == 404:
             logger.error("FLASK_UPLOAD: Arquivo não encontrado: %s", filename)
             return jsonify({'erro': 'Arquivo não encontrado'}), 404
-        else:
-            logger.error("FLASK_UPLOAD: Erro ao gerar URL para %s: %s", filename, e)
-            return jsonify({'erro': str(e)}), 500
+        logger.error("FLASK_UPLOAD: Erro ao gerar URL para %s: %s", filename, e)
+        return jsonify({'erro': str(e)}), 500
 
 
 if __name__ == '__main__':
