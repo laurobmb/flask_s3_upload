@@ -1,0 +1,33 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: minio-webui
+  namespace: minio-ocp
+  labels:
+    app: minio
+spec:
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+      name: webui
+  type: ClusterIP
+  selector:
+    app: minio
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: minio-api
+  namespace: minio-ocp
+  labels:
+    app: minio
+spec:
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+      name: api
+  type: ClusterIP
+  selector:
+    app: minio

@@ -1,0 +1,13 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: minio-ocp
+  namespace: minio-ocp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: crc-csi-hostpath-provisioner
+  volumeMode: Filesystem

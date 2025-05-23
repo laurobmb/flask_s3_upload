@@ -2,3 +2,5 @@ flask
 boto3
 botocore
 werkzeug
+pytest
+moto>=5.0.0

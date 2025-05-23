@@ -1,0 +1,54 @@
+---
+- name: Create container MINIO
+  hosts: server
+#  become: true
+  vars:
+    diretorio: ./minio/data
+    _state: started
+    minio_user: minioadmin
+    minio_pass: minioadmin
+
+  tasks:
+    - name: Create directory if not exist
+      ansible.builtin.file:
+        state: directory
+        path: "{{ diretorio }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
+#    - name: Install git client e container group
+#      ansible.builtin.dnf:
+#        name: "{{ item }}"
+#        state: present
+#      loop:
+#        - git
+#        - "@Container Management"
+
+    - name: Start container MINIO
+      containers.podman.podman_container:
+        name: minio
+        image: quay.io/minio/minio:latest
+        state: "{{ _state }}"
+        restart: true
+        rm: true
+        pull: missing
+        command: server /data --console-address :9090
+        ports:
+          - "9000:9000"
+          - "9090:9090"
+        env:
+          MINIO_ROOT_USER: "{{ minio_user }}"
+          MINIO_ROOT_PASSWORD: "{{ minio_pass }}"
+        volume:
+          - "{{ diretorio }}:/data:Z"
+
+    - name: Permit MINIO
+      ansible.posix.firewalld:
+        port: "{{ item }}"
+        permanent: true
+        state: enabled
+        immediate: true
+      loop:
+        - 9000/tcp
+        - 9090/tcp

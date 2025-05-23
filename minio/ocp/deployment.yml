@@ -1,0 +1,63 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: minio
+  namespace: minio-ocp
+  annotations:
+    deployment.kubernetes.io/revision: '1'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: minio
+    spec:
+      volumes:
+        - name: minio-ocp
+          persistentVolumeClaim:
+            claimName: minio-ocp
+      containers:
+        - resources: {}
+          readinessProbe:
+            tcpSocket:
+              port: 9090
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          name: container
+          command:
+            - /bin/bash
+            - '-c'
+          ports:
+            - containerPort: 9090
+              protocol: TCP
+            - containerPort: 9000
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: minio-ocp
+              mountPath: /data
+          terminationMessagePolicy: File
+          image: 'quay.io/minio/minio:latest'
+          args:
+            - 'minio server /data --console-address :9090'
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        node-role.kubernetes.io/worker: ''
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

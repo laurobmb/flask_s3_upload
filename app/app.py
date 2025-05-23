@@ -38,6 +38,17 @@ def is_allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+@app.route('/debug')
+def debug():
+    return render_template('debug.html',
+        s3_bucket=os.environ.get('S3_BUCKET', 'meu-bucket-de-imagens'),
+        s3_region=os.environ.get('S3_REGION', 'us-east-1'),
+        s3_access_key=os.environ.get('S3_ACCESS_KEY', 'minha_access_key_default'),
+        s3_secret_key=os.environ.get('S3_SECRET_KEY', 'minha_secret_key_default'),
+        s3_endpoint_url=os.environ.get('S3_ENDPOINT_URL', 'None'),
+        s3_verify_ssl=os.environ.get('S3_VERIFY_SSL', 'true').lower() in ['1', 'true', 'yes']
+        )
+
 @app.route('/')
 def index():
     """Aplicação Flask para upload de imagens em um bucket S3."""
@@ -85,6 +96,16 @@ def upload():
         return redirect(request.url)
 
 
+@app.route('/up', methods=['POST'])
+def up():
+    """Aplicação Flask para upload de imagens em um bucket S3."""
+    file = request.files['image']
+    filename = secure_filename(file.filename)
+    s3.upload_fileobj(file, S3_BUCKET, filename, ExtraArgs={'ContentType': file.content_type})
+    logger.info("FLASK_UPLOAD: enviada com sucesso!")
+    return jsonify({"return": "Arquivo enviado"})
+
+
 @app.route('/listar')
 def listar():
     """Aplicação Flask para upload de imagens em um bucket S3."""
@@ -114,9 +135,4 @@ def download(filename):
 
 
 if __name__ == '__main__':
-
-    app.run(
-        debug=True,
-        host='0.0.0.0',
-        port=5000
-        )
+    app.run( debug=True, host='0.0.0.0', port=5000 )

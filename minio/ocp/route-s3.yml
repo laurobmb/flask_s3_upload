@@ -1,0 +1,17 @@
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: s3
+  namespace: minio-ocp
+  labels:
+    app: minio
+spec:
+  host: s3-minio-ocp.apps-crc.testing
+  to:
+    kind: Service
+    name: minio-api
+    weight: 100
+  port:
+    targetPort: api
+  wildcardPolicy: None

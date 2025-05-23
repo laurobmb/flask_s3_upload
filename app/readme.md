@@ -1,8 +1,8 @@
 # Flask upload files on bucket
 
 ## Build
-  podman build -t quay.io/lagomes/flask-s3-upload:v3 .
-  podman push quay.io/lagomes/flask-s3-upload:v3
+  podman build -t quay.io/lagomes/flask-s3-upload:v9 .
+  podman push quay.io/lagomes/flask-s3-upload:v9
 
 ## Execute 
   export BUCKET_NAME=$(oc get obc -n flask-hml flask -o jsonpath='{.spec.bucketName}')
@@ -20,4 +20,4 @@
     -e S3_SECRET_KEY=$AWS_SECRET_ACCESS_KEY \
     -e S3_VERIFY_SSL=false \
     -e S3_ENDPOINT_URL=https://$ROUTE \
-    quay.io/lagomes/flask-s3-upload:v1
+    quay.io/lagomes/flask-s3-upload:v7
