@@ -117,6 +117,7 @@ def test_download(client):
 # 🔸 Download de arquivo que não existe gera erro
 def test_download_arquivo_inexistente(client):
     response = client.get('/download/inexistente.png')
-    assert response.status_code == 500
+    assert response.status_code == 404
     json_data = response.get_json()
     assert 'erro' in json_data
+    assert json_data['erro'] == 'Arquivo não encontrado'

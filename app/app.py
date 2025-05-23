@@ -66,14 +66,14 @@ def upload():
     if 'image' not in request.files:
         logger.error("FLASK_UPLOAD: Nenhum arquivo enviado")
         flash('Nenhum arquivo enviado.')
-        return redirect(request.url)
+        return redirect(url_for('index'))
 
     file = request.files['image']
 
     if file.filename == '':
         logger.error("FLASK_UPLOAD: Nome do arquivo vazio.")
         flash('Nome do arquivo vazio.')
-        return redirect(request.url)
+        return redirect(url_for('index'))
 
     if file and is_allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -97,7 +97,7 @@ def upload():
     else:
         logger.error("FLASK_UPLOAD: Formato de imagem não permitido.")
         flash('Formato de imagem não permitido.')
-        return redirect(request.url)
+        return redirect(url_for('index'))
 
 
 @app.route('/up', methods=['POST'])
@@ -127,18 +127,25 @@ def listar():
 
 @app.route('/download/<path:filename>')
 def download(filename):
-    """Aplicação Flask para upload de imagens em um bucket S3."""
+    """Download de arquivo com verificação de existência."""
     s3 = create_s3_client()
     try:
+        s3.head_object(Bucket=S3_BUCKET, Key=filename)
         url = s3.generate_presigned_url(
             'get_object',
             Params={'Bucket': S3_BUCKET, 'Key': filename},
             ExpiresIn=3600
         )
         return redirect(url)
-    except (ClientError, BotoCoreError) as e:
-        logger.error("FLASK_UPLOAD: Erro ao gerar URL para %s: %s", filename, e)
-        return jsonify({'erro': str(e)}), 500
+
+    except ClientError as e:
+        error_code = int(e.response['Error']['Code'])
+        if error_code == 404:
+            logger.error("FLASK_UPLOAD: Arquivo não encontrado: %s", filename)
+            return jsonify({'erro': 'Arquivo não encontrado'}), 404
+        else:
+            logger.error("FLASK_UPLOAD: Erro ao gerar URL para %s: %s", filename, e)
+            return jsonify({'erro': str(e)}), 500
 
 
 if __name__ == '__main__':
