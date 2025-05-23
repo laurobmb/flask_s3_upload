@@ -2,8 +2,8 @@ import io
 import pytest
 import boto3
 from moto import mock_aws
-from app import app, S3_BUCKET, S3_REGION
 from bs4 import BeautifulSoup
+from app import app, S3_BUCKET, S3_REGION
 
 
 # 🏗️ Configura o mock do S3
