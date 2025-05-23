@@ -6,3 +6,4 @@ pytest
 moto>=5.0.0
 pylint-flask
 pylint-pytest
+bs4
