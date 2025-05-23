@@ -1,8 +1,8 @@
 # Flask upload files on bucket
 
 ## Build
-  podman build -t quay.io/lagomes/flask-s3-upload:v9 .
-  podman push quay.io/lagomes/flask-s3-upload:v9
+  podman build -t quay.io/lagomes/flask-s3-upload:v10 .
+  podman push quay.io/lagomes/flask-s3-upload:v10
 
 ## Execute 
   export BUCKET_NAME=$(oc get obc -n flask-hml flask -o jsonpath='{.spec.bucketName}')

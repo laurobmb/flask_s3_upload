@@ -4,3 +4,5 @@ botocore
 werkzeug
 pytest
 moto>=5.0.0
+pylint-flask
+pylint-pytest

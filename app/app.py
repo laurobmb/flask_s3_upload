@@ -23,14 +23,16 @@ S3_ACCESS_KEY = os.environ.get('S3_ACCESS_KEY', 'minha_access_key_default')
 S3_SECRET_KEY = os.environ.get('S3_SECRET_KEY', 'minha_secret_key_default')
 S3_ENDPOINT_URL = os.environ.get('S3_ENDPOINT_URL')
 S3_VERIFY_SSL = os.environ.get('S3_VERIFY_SSL', 'true').lower() in ['1', 'true', 'yes']
-s3 = boto3.client(
-    's3',
-    region_name=S3_REGION,
-    aws_access_key_id=S3_ACCESS_KEY,
-    aws_secret_access_key=S3_SECRET_KEY,
-    endpoint_url=S3_ENDPOINT_URL,
-    verify=S3_VERIFY_SSL
-)
+
+def create_s3_client():
+    return boto3.client(
+        's3',
+        region_name=S3_REGION,
+        aws_access_key_id=S3_ACCESS_KEY,
+        aws_secret_access_key=S3_SECRET_KEY,
+        endpoint_url=S3_ENDPOINT_URL,
+        verify=S3_VERIFY_SSL
+    )
 
 
 def is_allowed_file(filename):
@@ -40,6 +42,7 @@ def is_allowed_file(filename):
 
 @app.route('/debug')
 def debug():
+    s3 = create_s3_client()
     """Aplicação Flask para upload de imagens em um bucket S3."""
     return render_template('debug.html',
         s3_bucket=os.environ.get('S3_BUCKET', 'meu-bucket-de-imagens'),
@@ -59,6 +62,7 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload():
+    s3 = create_s3_client()
     """Aplicação Flask para upload de imagens em um bucket S3."""
     if 'image' not in request.files:
         logger.error("FLASK_UPLOAD: Nenhum arquivo enviado")
@@ -99,6 +103,7 @@ def upload():
 
 @app.route('/up', methods=['POST'])
 def up():
+    s3 = create_s3_client()
     """Aplicação Flask para upload de imagens em um bucket S3."""
     file = request.files['image']
     filename = secure_filename(file.filename)
@@ -109,6 +114,7 @@ def up():
 
 @app.route('/listar')
 def listar():
+    s3 = create_s3_client()
     """Aplicação Flask para upload de imagens em um bucket S3."""
     try:
         objetos = s3.list_objects_v2(Bucket=S3_BUCKET)
@@ -122,6 +128,7 @@ def listar():
 
 @app.route('/download/<path:filename>')
 def download(filename):
+    s3 = create_s3_client()
     """Aplicação Flask para upload de imagens em um bucket S3."""
     try:
         url = s3.generate_presigned_url(
