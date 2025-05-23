@@ -42,7 +42,6 @@ def is_allowed_file(filename):
 
 @app.route('/debug')
 def debug():
-    s3 = create_s3_client()
     """Aplicação Flask para upload de imagens em um bucket S3."""
     return render_template('debug.html',
         s3_bucket=os.environ.get('S3_BUCKET', 'meu-bucket-de-imagens'),
@@ -62,8 +61,8 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    s3 = create_s3_client()
     """Aplicação Flask para upload de imagens em um bucket S3."""
+    s3 = create_s3_client()
     if 'image' not in request.files:
         logger.error("FLASK_UPLOAD: Nenhum arquivo enviado")
         flash('Nenhum arquivo enviado.')
@@ -103,8 +102,8 @@ def upload():
 
 @app.route('/up', methods=['POST'])
 def up():
-    s3 = create_s3_client()
     """Aplicação Flask para upload de imagens em um bucket S3."""
+    s3 = create_s3_client()
     file = request.files['image']
     filename = secure_filename(file.filename)
     s3.upload_fileobj(file, S3_BUCKET, filename, ExtraArgs={'ContentType': file.content_type})
@@ -114,8 +113,8 @@ def up():
 
 @app.route('/listar')
 def listar():
-    s3 = create_s3_client()
     """Aplicação Flask para upload de imagens em um bucket S3."""
+    s3 = create_s3_client()
     try:
         objetos = s3.list_objects_v2(Bucket=S3_BUCKET)
         nomes_arquivos = [obj['Key'] for obj in objetos.get('Contents', [])]
@@ -128,8 +127,8 @@ def listar():
 
 @app.route('/download/<path:filename>')
 def download(filename):
-    s3 = create_s3_client()
     """Aplicação Flask para upload de imagens em um bucket S3."""
+    s3 = create_s3_client()
     try:
         url = s3.generate_presigned_url(
             'get_object',
