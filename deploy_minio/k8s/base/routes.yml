@@ -1,0 +1,21 @@
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: webui
+  labels:
+    app: minio
+spec:
+  host: ""
+  wildcardPolicy: None
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: s3
+  labels:
+    app: minio
+spec:
+  host: ""
+  wildcardPolicy: None

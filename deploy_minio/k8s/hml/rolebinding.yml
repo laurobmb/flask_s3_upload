@@ -1,0 +1,14 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: minio-anyuid-rolebinding
+  namespace: minio-ocp
+subjects:
+  - kind: ServiceAccount
+    name: minio-sa-hml
+    namespace: minio-ocp
+roleRef:
+  kind: Role
+  name: minio-anyuid-role-hml
+  apiGroup: rbac.authorization.k8s.io

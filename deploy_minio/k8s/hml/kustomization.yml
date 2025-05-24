@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: minio-ocp-hml
+
+nameSuffix: -hml
+
+labels:
+- includeSelectors: true
+  pairs:
+    app: minio-hml
+
+resources:
+  -  ../base
+  - pvc.yml
+  - rolebinding.yml
+  - sa.yml
+  - service.yml
+  - namespace.yml
+
+patches:
+- path: patch-deployment.yml
+- path: patch-route.yml
+
+secretGenerator:
+  - name: minio-admin-pass
+    literals:
+      - MINIO_PASS=super_secret-pass
+
+  - name: minio-admin-user
+    literals:
+      - MINIO_USER=admin
+
+generatorOptions:
+  disableNameSuffixHash: true
+

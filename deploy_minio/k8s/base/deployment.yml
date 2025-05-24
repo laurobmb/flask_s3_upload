@@ -2,7 +2,6 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: minio
-  namespace: minio-ocp
   annotations:
     deployment.kubernetes.io/revision: '1'
 spec:
@@ -44,7 +43,7 @@ spec:
             - name: minio-ocp
               mountPath: /data
           terminationMessagePolicy: File
-          image: 'quay.io/minio/minio:latest'
+          image: minioimage
           args:
             - 'minio server /data --console-address :9090'
       restartPolicy: Always

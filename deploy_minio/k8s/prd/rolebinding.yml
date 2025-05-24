@@ -6,9 +6,9 @@ metadata:
   namespace: minio-ocp
 subjects:
   - kind: ServiceAccount
-    name: minio-sa
+    name: minio-sa-prd
     namespace: minio-ocp
 roleRef:
   kind: Role
-  name: minio-anyuid-role
+  name: minio-anyuid-role-prd
   apiGroup: rbac.authorization.k8s.io

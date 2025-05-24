@@ -1,0 +1,25 @@
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: webui
+spec:
+  to:
+    kind: Service
+    name: minio-webui-hml
+    weight: 100
+  port:
+    targetPort: webui
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: s3
+spec:
+  to:
+    kind: Service
+    name: minio-api-hml
+    weight: 100
+  port:
+    targetPort: api
